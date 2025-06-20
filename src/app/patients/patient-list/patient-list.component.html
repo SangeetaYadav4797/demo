@@ -1,0 +1,28 @@
+ <hr class="my-4">
+
+  <h4>🧾 Patient List</h4>
+  <table class="table table-bordered mt-3" *ngIf="patients.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Contact</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of patients">
+        <td>{{ patient.id }}</td>
+        <td>{{ patient.name }}</td>
+        <td>{{ patient.age }}</td>
+        <td>{{ patient.gender }}</td>
+        <td>{{ patient.contact }}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" (click)="editPatient(patient)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deletePatient(patient.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>

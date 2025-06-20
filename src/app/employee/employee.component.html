@@ -2,7 +2,7 @@
   <a class="navbar-brand fw-bold" routerLink="/">🏥 HealthCare</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
     <span class="navbar-toggler-icon"></span>
-  </button>
+  </button> 
 
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav me-auto">
@@ -65,7 +65,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let emp of employeeList; trackBy: trackByEmpId">
-        <td>{{ emp.name }}</td>
+        <td >{{ emp.name }}</td>
         <td>{{ emp.email }}</td>
         <td>{{ emp.mobile }}</td>
         <td>{{ emp.age }}</td>

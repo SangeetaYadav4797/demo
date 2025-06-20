@@ -1,1 +1,24 @@
-<p>navbar works!</p>
+<!-- sidebar vertical nav -->
+<div class="sidebar">
+  <!-- <h3 class="sidebar-title">🏥 Dashboard</h3> -->
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a routerLink="/home" class="nav-link">🏠 Home</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/employee" class="nav-link">👤 Personal Info</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/doctors" class="nav-link">🩺 Doctors</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/patients" class="nav-link">🧑‍🤝‍🧑 Patients</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/appointment" class="nav-link">🗓️ Appointment</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" (click)="logout()">🚪 Logout</a>
+    </li>
+  </ul>
+</div>

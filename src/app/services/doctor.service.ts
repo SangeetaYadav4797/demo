@@ -1,9 +1,30 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http'; 
+import { Observable } from 'rxjs';
+import { Doctor } from '../doctors/doctor.model'; 
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class DoctorService {
 
-  constructor() { }
+  private baseUrl = 'https://localhost:7170/api/Doctors';
+  constructor(private http: HttpClient) { }
+
+  getAllDoctors(): Observable<Doctor[]> {
+    return this.http.get<Doctor[]>(this.baseUrl);
+  }
+
+  addDoctor(doctor: Doctor): Observable<Doctor> {
+    return this.http.post<Doctor>(this.baseUrl, doctor);
+  }
+
+  updateDoctor(id: number, doctor: Doctor): Observable<Doctor> {
+    return this.http.put<Doctor>(`${this.baseUrl}/${id}`, doctor);
+  }
+
+  deleteDoctor(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
 }

@@ -1,1 +1,61 @@
-<p>doctors works!</p>
+<div class="container mt-4">
+  <h2 class="text-center">👨‍⚕️ Doctor Management</h2>
+
+  <!-- ✅ Doctor Form -->
+  <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" class="mb-4 border p-4 rounded shadow-sm bg-light">
+    <div class="form-group mb-3">
+      <label>Name</label>
+      <input type="text" formControlName="name" class="form-control" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Specialization</label>
+      <input type="text" formControlName="specialization" class="form-control" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Experience (Years)</label>
+      <input type="number" formControlName="experience" class="form-control" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Contact</label>
+      <input type="text" formControlName="contact" class="form-control" required>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-success">
+        {{ isEditMode ? 'Update' : 'Add' }} Doctor
+      </button>
+      <button type="button" (click)="resetForm()" class="btn btn-secondary">Reset</button>
+    </div>
+  </form>
+
+  <hr>
+
+  <!-- ✅ Doctor List Table -->
+  <table class="table table-bordered mt-4">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Specialization</th>
+      <th>Experience</th>
+      <th>Contact</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let doctor of doctors">
+      <td>{{ doctor.name }}</td>
+      <td>{{ doctor.specialization }}</td>
+      <td>{{ doctor.experience }}</td>
+      <td>{{ doctor.contact }}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" (click)="editDoctor(doctor)">Edit</button>
+        <button class="btn btn-danger btn-sm" (click)="deleteDoctor(doctor.id!)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>

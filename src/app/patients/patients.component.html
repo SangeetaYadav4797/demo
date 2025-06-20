@@ -1,1 +1,63 @@
-<p>patients works!</p>
+<div class="container mt-4">
+    <a routerLink="/patients" class="btn btn-primary mb-3">Go to Patients</a>
+  <h3 class="text-primary mb-3">{{ isEdit ? 'Update Patient' : 'Add New Patient' }}</h3>
+<form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input id="name" class="form-control" formControlName="name" placeholder="Enter name" />
+    </div>
+
+    <div class="mb-3">
+      <label for="age" class="form-label">Age</label>
+      <input id="age" type="number" class="form-control" formControlName="age" />
+    </div>
+
+    <div class="mb-3">
+      <label for="gender" class="form-label">Gender</label>
+      <select id="gender" class="form-select" formControlName="gender">
+        <option value="" disabled>Select gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="contact" class="form-label">Contact</label>
+      <input id="contact" class="form-control" formControlName="contact" placeholder="Enter contact" />
+    </div>
+
+    <button type="submit" class="btn btn-success" [disabled]="patientForm.invalid">
+      {{ isEdit ? 'Update' : 'Submit' }}
+    </button>
+
+    <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
+  </form>
+ <table class="table mt-4" *ngIf="patientList.length > 0">
+
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Gender</th>
+      <th>Contact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let patient of patientList">
+      <td>{{ patient.name }}</td>
+      <td>{{ patient.age }}</td>
+      <td>{{ patient.gender }}</td>
+      <td>{{ patient.contact }}</td>
+      <td>
+       <!-- ✅ Use non-null assertion (!) -->
+   <button class="btn btn-danger btn-sm" (click)="deletePatient(patient.id)">Delete</button>
+
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+
+</div>

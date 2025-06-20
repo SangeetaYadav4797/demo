@@ -20,26 +20,34 @@ export class LoginComponent {
     private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      username: ['', Validators.required],   // ✅ Fixed
       password: ['', Validators.required]
     });
   }
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+  login() {
+  if (this.loginForm.valid) {
+    const { username, password } = this.loginForm.value;
 
-      this.authService.login(username, password).subscribe(
-        (res) => {
-          alert('Login successful');
-          this.router.navigate(['/employee']); // ya dashboard
-        },
-        (err) => {
-          alert('Login failed: ' + err.error.message);
+    this.authService.login(username, password).subscribe({
+      next: (res: any) => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('role', res.role || '');
+          alert('Login successful!');
+          this.router.navigate(['/dashboard']);
+        } else {
+          alert('Token not found in response!');
         }
-      );
-    } else {
-      alert('Please fill all fields');
-    }
+      },
+      error: (err) => {
+        alert('Login failed: ' + (err.error?.message || 'Unknown error'));
+      }
+    });
+  } else {
+    alert('Please fill all fields');
   }
+}
+
+
 }

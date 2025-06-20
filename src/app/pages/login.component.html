@@ -1,27 +1,23 @@
-<!-- src/app/login/login.component.html -->
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <div class="card shadow p-4">
         <h2 class="text-center mb-4 text-primary">Login</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
           <div class="mb-3">
             <label class="form-label">Username</label>
             <input type="text" formControlName="username" class="form-control" />
-            <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid" class="text-danger">
-              Username is required
-            </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Password</label>
             <input type="password" formControlName="password" class="form-control" />
-            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="text-danger">
-              Password is required
-            </div>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+          <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
+            Login
+          </button>
         </form>
       </div>
     </div>
