@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { PatientService } from '../services/patient.service';
+import { CommonModule } from '@angular/common';
 import { Patient } from './patient.model';
+import { PatientService } from '../services/patient.service';
 
 @Component({
   selector: 'app-patients',
@@ -12,13 +12,16 @@ import { Patient } from './patient.model';
   styleUrls: ['./patients.component.css']
 })
 export class PatientsComponent implements OnInit {
-  patientForm: FormGroup;
+  @ViewChild('patientModal') patientModal!: ElementRef;
+
+  patientForm!: FormGroup;
   isEdit: boolean = false;
+  selectedPatientId: number = 0;
   patientList: Patient[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private patientService: PatientService   // ✅ correctly injected
+    private patientService: PatientService
   ) {
     this.patientForm = this.fb.group({
       name: ['', Validators.required],
@@ -32,50 +35,56 @@ export class PatientsComponent implements OnInit {
     this.loadPatients();
   }
 
-  // loadPatients(): void {
-  //   this.patientService.getPatients().subscribe((data: Patient[]) => {
-  //     console.log('Data from API:', data); 
-  //     this.patientList = data;
-  //   });
-  // }
-
-loadPatients(): void {
-  this.patientService.getPatients().subscribe({
-    next: (data: Patient[]) => {
-      console.log('API response:', data); // 👀 Dekho yeh console mein aaraha hai ya nahi
-      this.patientList = data;
-    },
-    error: (err) => {
-      console.error('API error:', err); // 👀 Agar API call fail ho rahi ho to
-    }
-  });
-}
-
-  onSubmit(): void {
-    if (this.patientForm.valid) {
-      this.patientService.addPatient(this.patientForm.value).subscribe(() => {
-        alert('Patient added successfully!');
-        this.patientForm.reset();
-        this.loadPatients(); //reload list after add
-      });
-    }
-  }
-
-  resetForm(): void {
+  openModal(): void {
     this.patientForm.reset();
     this.isEdit = false;
+    this.patientModal.nativeElement.style.display = 'block';
+  }
+
+  closeModal(): void {
+    this.patientForm.reset();
+    this.isEdit = false;
+    this.patientModal.nativeElement.style.display = 'none';
+  }
+
+  loadPatients(): void {
+    this.patientService.getPatients().subscribe({
+      next: (data) => this.patientList = data,
+      error: (err) => console.error('Error:', err)
+    });
+  }
+
+  onSubmit(): void {
+    if (this.patientForm.invalid) return;
+
+    if (this.isEdit) {
+      this.patientService.updatePatient(this.selectedPatientId, this.patientForm.value).subscribe(() => {
+        alert('Patient updated!');
+        this.closeModal();
+        this.loadPatients();
+      });
+    } else {
+      this.patientService.addPatient(this.patientForm.value).subscribe(() => {
+        alert('Patient added!');
+        this.closeModal();
+        this.loadPatients();
+      });
+    }
   }
 
   deletePatient(id: number): void {
     if (confirm('Are you sure you want to delete?')) {
       this.patientService.deletePatient(id).subscribe(() => {
-        alert('Patient deleted');
-        this.loadPatients();// reload after delete
+        alert('Patient deleted!');
+        this.loadPatients();
       });
     }
   }
+
   editPatient(patient: Patient): void {
+    this.selectedPatientId = patient.id!;
     this.patientForm.patchValue(patient);
     this.isEdit = true;
+    this.patientModal.nativeElement.style.display = 'block';
   }
 }

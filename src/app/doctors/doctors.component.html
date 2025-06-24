@@ -1,61 +1,103 @@
 <div class="container mt-4">
-  <h2 class="text-center">👨‍⚕️ Doctor Management</h2>
+  <h2 class="text-center mb-3">👨‍⚕️ Doctor Management</h2>
 
-  <!-- ✅ Doctor Form -->
-  <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" class="mb-4 border p-4 rounded shadow-sm bg-light">
-    <div class="form-group mb-3">
-      <label>Name</label>
-      <input type="text" formControlName="name" class="form-control" required>
+  <!-- ✅ Add Button -->
+  <div style="display: flex; justify-content: flex-end;">
+    <button
+      (click)="openModal()"
+      style="
+        background-color: #1976d2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+      "
+      onmouseover="this.style.backgroundColor='#125ea2'"
+      onmouseout="this.style.backgroundColor='#1976d2'"
+    >
+      ➕ Add Doctor
+    </button>
+  </div>
+
+  <!-- ✅ Doctor Table -->
+  <table class="table table-bordered table-striped mt-4">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Specialization</th>
+        <th>Experience</th>
+        <th>Contact</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let doc of doctors">
+        <td>{{ doc.name }}</td>
+        <td>{{ doc.specialization }}</td>
+        <td>{{ doc.experience }}</td>
+        <td>{{ doc.contact }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" (click)="editDoctor(doc)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteDoctor(doc.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ Modal -->
+<div #doctorModal class="modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h4 class="modal-title">{{ isEditMode ? 'Update Doctor' : 'Add Doctor' }}</h4>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="mb-3 row">
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Name" formControlName="name" />
+              <div *ngIf="doctorForm.get('name')?.invalid && doctorForm.get('name')?.touched" class="text-danger">
+                Name is required.
+              </div>
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Specialization" formControlName="specialization" />
+              <div *ngIf="doctorForm.get('specialization')?.invalid && doctorForm.get('specialization')?.touched" class="text-danger">
+                Specialization is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-6">
+              <input type="number" class="form-control" placeholder="Experience (years)" formControlName="experience" />
+              <div *ngIf="doctorForm.get('experience')?.invalid && doctorForm.get('experience')?.touched" class="text-danger">
+                Experience is required.
+              </div>
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Contact" formControlName="contact" />
+              <div *ngIf="doctorForm.get('contact')?.invalid && doctorForm.get('contact')?.touched" class="text-danger">
+                Contact is required.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" [disabled]="doctorForm.invalid" class="btn btn-primary">
+            {{ isEditMode ? 'Update' : 'Save' }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
+        </div>
+      </form>
     </div>
-
-    <div class="form-group mb-3">
-      <label>Specialization</label>
-      <input type="text" formControlName="specialization" class="form-control" required>
-    </div>
-
-    <div class="form-group mb-3">
-      <label>Experience (Years)</label>
-      <input type="number" formControlName="experience" class="form-control" required>
-    </div>
-
-    <div class="form-group mb-3">
-      <label>Contact</label>
-      <input type="text" formControlName="contact" class="form-control" required>
-    </div>
-
-    <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-success">
-        {{ isEditMode ? 'Update' : 'Add' }} Doctor
-      </button>
-      <button type="button" (click)="resetForm()" class="btn btn-secondary">Reset</button>
-    </div>
-  </form>
-
-  <hr>
-
-  <!-- ✅ Doctor List Table -->
-  <table class="table table-bordered mt-4">
-  <thead class="table-dark">
-    <tr>
-      <th>Name</th>
-      <th>Specialization</th>
-      <th>Experience</th>
-      <th>Contact</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let doctor of doctors">
-      <td>{{ doctor.name }}</td>
-      <td>{{ doctor.specialization }}</td>
-      <td>{{ doctor.experience }}</td>
-      <td>{{ doctor.contact }}</td>
-      <td>
-        <button class="btn btn-warning btn-sm" (click)="editDoctor(doctor)">Edit</button>
-        <button class="btn btn-danger btn-sm" (click)="deleteDoctor(doctor.id!)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+  </div>
 </div>

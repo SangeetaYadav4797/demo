@@ -10,9 +10,9 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DoctorsComponent } from './doctors/doctors.component';
 import { PatientsComponent } from './patients/patients.component';
 import { EmployeeComponent } from './employee/employee.component';
-import { AppointmentComponent } from './appointment/appointment.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
@@ -22,13 +22,14 @@ const routes: Routes = [
   { path: 'doctors', component: DoctorsComponent },
   { path: 'patients', component: PatientsComponent },
   { path: 'employee', component: EmployeeComponent },
-  { path: 'appointment', component: AppointmentComponent },
   { path: 'patients', component: PatientsComponent },
+  { path: 'appointments', component: AppointmentsComponent },
+
 
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

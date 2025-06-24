@@ -1,63 +1,88 @@
 <div class="container mt-4">
-    <a routerLink="/patients" class="btn btn-primary mb-3">Go to Patients</a>
-  <h3 class="text-primary mb-3">{{ isEdit ? 'Update Patient' : 'Add New Patient' }}</h3>
-<form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+  <h2 class="text-center mb-3">🏥 Patient Management</h2>
 
-    <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input id="name" class="form-control" formControlName="name" placeholder="Enter name" />
+  <div class="d-flex justify-content-end mb-2">
+    <button class="btn btn-primary" (click)="openModal()">➕ Add Patient</button>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Contact</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of patientList">
+        <td>{{ patient.name }}</td>
+        <td>{{ patient.age }}</td>
+        <td>{{ patient.gender }}</td>
+        <td>{{ patient.contact }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" (click)="editPatient(patient)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deletePatient(patient.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ Modal -->
+<div #patientModal class="modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h4 class="modal-title">{{ isEdit ? 'Update Patient' : 'Add Patient' }}</h4>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="mb-3 row">
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Name" formControlName="name" />
+              <div *ngIf="patientForm.get('name')?.invalid && patientForm.get('name')?.touched" class="text-danger">
+                Name is required.
+              </div>
+            </div>
+            <div class="col-6">
+              <input type="number" class="form-control" placeholder="Age" formControlName="age" />
+              <div *ngIf="patientForm.get('age')?.invalid && patientForm.get('age')?.touched" class="text-danger">
+                Age is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-6">
+              <select class="form-select" formControlName="gender">
+                <option value="" disabled>Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <div *ngIf="patientForm.get('gender')?.invalid && patientForm.get('gender')?.touched" class="text-danger">
+                Gender is required.
+              </div>
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Contact" formControlName="contact" />
+              <div *ngIf="patientForm.get('contact')?.invalid && patientForm.get('contact')?.touched" class="text-danger">
+                Contact is required.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="patientForm.invalid">
+            {{ isEdit ? 'Update' : 'Save' }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
+        </div>
+      </form>
     </div>
-
-    <div class="mb-3">
-      <label for="age" class="form-label">Age</label>
-      <input id="age" type="number" class="form-control" formControlName="age" />
-    </div>
-
-    <div class="mb-3">
-      <label for="gender" class="form-label">Gender</label>
-      <select id="gender" class="form-select" formControlName="gender">
-        <option value="" disabled>Select gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="contact" class="form-label">Contact</label>
-      <input id="contact" class="form-control" formControlName="contact" placeholder="Enter contact" />
-    </div>
-
-    <button type="submit" class="btn btn-success" [disabled]="patientForm.invalid">
-      {{ isEdit ? 'Update' : 'Submit' }}
-    </button>
-
-    <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
-  </form>
- <table class="table mt-4" *ngIf="patientList.length > 0">
-
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Gender</th>
-      <th>Contact</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let patient of patientList">
-      <td>{{ patient.name }}</td>
-      <td>{{ patient.age }}</td>
-      <td>{{ patient.gender }}</td>
-      <td>{{ patient.contact }}</td>
-      <td>
-       <!-- ✅ Use non-null assertion (!) -->
-   <button class="btn btn-danger btn-sm" (click)="deletePatient(patient.id)">Delete</button>
-
-      </td>
-    </tr>
-  </tbody>
-
-</table>
-
-
+  </div>
 </div>

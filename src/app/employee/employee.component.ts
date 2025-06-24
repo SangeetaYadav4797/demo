@@ -18,6 +18,7 @@ export class EmployeeComponent implements OnInit {
 
   userRole: string = '';
   isLoggedIn: boolean = false;
+  isEditMode: boolean = false; // ✅ Added to fix the error
 
   employeeList: Employee[] = [];
   employeeForm!: FormGroup;
@@ -59,22 +60,18 @@ export class EmployeeComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);   // Angular router se redirect
+    this.router.navigate(['/login']);
   }
 
-  // openModel() {
-  //   if (this.modal) {
-  //     this.modal.nativeElement.style.display = 'block';
-  //   }
-  // }
-  openModel(): void {
-    this.employeeForm.reset({ id: 0 }); // Reset form for new employee
-    this.modal.nativeElement.style.display = 'block'; // Show modal
+  openModel(isEdit: boolean = false): void {
+    this.isEditMode = isEdit;
+    this.employeeForm.reset({ id: 0, status: true });
+    this.modal.nativeElement.style.display = 'block';
   }
-
 
   closeModel() {
     this.setFormState();
+    this.isEditMode = false;
     if (this.modal) {
       this.modal.nativeElement.style.display = 'none';
     }
@@ -92,13 +89,13 @@ export class EmployeeComponent implements OnInit {
       stateId: ['', Validators.required],
       cityId: ['', Validators.required],
       salary: ['', Validators.required],
-      status: [false, Validators.requiredTrue]
+      status: ['Active', Validators.required]
     });
 
     this.filteredStates = [];
     this.filteredCities = [];
   }
-  
+
   getEmployee() {
     this.empService.getEmployees().subscribe(
       (res) => {
@@ -106,8 +103,8 @@ export class EmployeeComponent implements OnInit {
           ...emp,
           countryName: this.countries.find(c => c.id === emp.countryId)?.name || '',
           stateName: this.states.find(s => s.id === emp.stateId)?.name || '',
-          cityName: this.cities.find(c => c.stateId === emp.cityId)?.name || '',
-          status: emp.status ? 'Active' : 'Deactive'
+          cityName: this.cities.find(c => c.id === emp.cityId)?.name || '',
+          status: emp.status === 'Active' ? 'Active' : 'Inactive'
         }));
       },
       (error) => {
@@ -124,32 +121,30 @@ export class EmployeeComponent implements OnInit {
 
     const formData = this.employeeForm.value;
 
-    if (formData.id === 0) {
-      this.empService.addEmployee(formData).subscribe(() => {
-        alert('Employee Added Successfully');
+    if (this.isEditMode) {
+      this.empService.updateEmployee(formData).subscribe(() => {
+        alert('Employee Updated Successfully');
         this.getEmployee();
         this.closeModel();
       });
     } else {
-      this.empService.updateEmployee(formData).subscribe(() => {
-        alert('Employee Updated Successfully');
+      this.empService.addEmployee(formData).subscribe(() => {
+        alert('Employee Added Successfully');
         this.getEmployee();
         this.closeModel();
       });
     }
 
     this.employeeForm.reset();
-    this.employeeForm.patchValue({ status: false });
+    this.employeeForm.patchValue({ status: 'Active' });
+    this.isEditMode = false;
   }
 
   onEdit(employee: Employee) {
-    this.employeeForm.reset();
     this.employeeForm.patchValue(employee);
-
     this.filteredStates = this.states.filter(s => s.countryId === employee.countryId);
     this.filteredCities = this.cities.filter(c => c.stateId === employee.stateId);
-
-    this.openModel();
+    this.openModel(true);
   }
 
   onDelete(id: number) {
@@ -159,6 +154,22 @@ export class EmployeeComponent implements OnInit {
         this.getEmployee();
       });
     }
+  }
+
+  toggleStatus() {
+    const currentStatus = this.employeeForm.value.status;
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+    const updatedEmployee = {
+      ...this.employeeForm.value,
+      status: newStatus
+    };
+
+    this.empService.updateEmployee(updatedEmployee).subscribe(() => {
+      alert(`Employee ${newStatus === 'Active' ? 'enabled' : 'disabled'} successfully.`);
+      this.getEmployee();
+      this.closeModel();
+    });
   }
 
   onCountryChange(event: Event): void {
@@ -179,3 +190,4 @@ export class EmployeeComponent implements OnInit {
     return emp.id;
   }
 }
+
