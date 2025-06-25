@@ -64,18 +64,28 @@ export class EmployeeComponent implements OnInit {
   }
 
   openModel(isEdit: boolean = false): void {
-    this.isEditMode = isEdit;
-    this.employeeForm.reset({ id: 0, status: true });
-    this.modal.nativeElement.style.display = 'block';
-  }
+  this.isEditMode = isEdit;
+  this.employeeForm.reset({ id: 0, status: true });
 
-  closeModel() {
-    this.setFormState();
-    this.isEditMode = false;
-    if (this.modal) {
-      this.modal.nativeElement.style.display = 'none';
-    }
-  }
+  const modalEl = this.modal.nativeElement as HTMLElement;
+  modalEl.classList.add('show');
+  modalEl.style.display = 'block';
+  document.body.classList.add('modal-open');
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop fade show';
+  document.body.appendChild(backdrop);
+}
+
+closeModel(): void {
+  const modalEl = this.modal.nativeElement as HTMLElement;
+  modalEl.classList.remove('show');
+  modalEl.style.display = 'none';
+  document.body.classList.remove('modal-open');
+
+  const backdrop = document.querySelector('.modal-backdrop');
+  if (backdrop) backdrop.remove();
+}
+
 
   setFormState() {
     this.employeeForm = this.fb.group({
@@ -89,7 +99,7 @@ export class EmployeeComponent implements OnInit {
       stateId: ['', Validators.required],
       cityId: ['', Validators.required],
       salary: ['', Validators.required],
-      status: ['Active', Validators.required]
+      status: [true, Validators.required]
     });
 
     this.filteredStates = [];
@@ -104,7 +114,7 @@ export class EmployeeComponent implements OnInit {
           countryName: this.countries.find(c => c.id === emp.countryId)?.name || '',
           stateName: this.states.find(s => s.id === emp.stateId)?.name || '',
           cityName: this.cities.find(c => c.id === emp.cityId)?.name || '',
-          status: emp.status === 'Active' ? 'Active' : 'Inactive'
+          status: emp.status === 'Active' ? true : false
         }));
       },
       (error) => {
@@ -140,12 +150,14 @@ export class EmployeeComponent implements OnInit {
     this.isEditMode = false;
   }
 
-  onEdit(employee: Employee) {
-    this.employeeForm.patchValue(employee);
-    this.filteredStates = this.states.filter(s => s.countryId === employee.countryId);
-    this.filteredCities = this.cities.filter(c => c.stateId === employee.stateId);
-    this.openModel(true);
-  }
+ onEdit(employee: Employee) {
+  console.log('Editing employee:', employee); 
+  this.employeeForm.patchValue(employee);
+  this.filteredStates = this.states.filter(s => s.countryId === employee.countryId);
+  this.filteredCities = this.cities.filter(c => c.stateId === employee.stateId);
+  this.openModel(true);
+}
+
 
   onDelete(id: number) {
     if (confirm("Are you sure you want to delete this Employee?")) {

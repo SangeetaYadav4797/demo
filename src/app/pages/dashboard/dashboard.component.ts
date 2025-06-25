@@ -18,12 +18,12 @@ export class DashboardComponent implements OnInit {
 
   constructor(private dashboardService: DashboardService,private doctorService:DoctorService ) {}
 
- ngOnInit(): void {
+ngOnInit(): void {
   this.dashboardService.getDashboardStats().subscribe(res => {
     console.log('Dashboard API response:', res); 
-    this.totalDoctors = res.data.totalDoctors;
-    this.totalPatients = res.totalPatients;
-    this.appointmentsToday = res.appointmentsToday;
+    this.totalDoctors = res.totalDoctors;         
+    this.totalPatients = res.totalPatients;       
+    this.appointmentsToday = res.appointmentsToday; 
     this.loadDoctors();
   });
 }
