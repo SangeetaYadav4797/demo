@@ -18,6 +18,7 @@ export class EmployeeComponent implements OnInit {
 
   userRole: string = '';
   isLoggedIn: boolean = false;
+  isEditMode: boolean = false; // ✅ Added to fix the error
 
   employeeList: Employee[] = [];
   employeeForm!: FormGroup;
@@ -59,26 +60,32 @@ export class EmployeeComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);   // Angular router se redirect
+    this.router.navigate(['/login']);
   }
 
-  // openModel() {
-  //   if (this.modal) {
-  //     this.modal.nativeElement.style.display = 'block';
-  //   }
-  // }
-  openModel(): void {
-    this.employeeForm.reset({ id: 0 }); // Reset form for new employee
-    this.modal.nativeElement.style.display = 'block'; // Show modal
-  }
+  openModel(isEdit: boolean = false): void {
+  this.isEditMode = isEdit;
+  this.employeeForm.reset({ id: 0, status: true });
 
+  const modalEl = this.modal.nativeElement as HTMLElement;
+  modalEl.classList.add('show');
+  modalEl.style.display = 'block';
+  document.body.classList.add('modal-open');
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop fade show';
+  document.body.appendChild(backdrop);
+}
 
-  closeModel() {
-    this.setFormState();
-    if (this.modal) {
-      this.modal.nativeElement.style.display = 'none';
-    }
-  }
+closeModel(): void {
+  const modalEl = this.modal.nativeElement as HTMLElement;
+  modalEl.classList.remove('show');
+  modalEl.style.display = 'none';
+  document.body.classList.remove('modal-open');
+
+  const backdrop = document.querySelector('.modal-backdrop');
+  if (backdrop) backdrop.remove();
+}
+
 
   setFormState() {
     this.employeeForm = this.fb.group({
@@ -92,13 +99,13 @@ export class EmployeeComponent implements OnInit {
       stateId: ['', Validators.required],
       cityId: ['', Validators.required],
       salary: ['', Validators.required],
-      status: [false, Validators.requiredTrue]
+      status: [true, Validators.required]
     });
 
     this.filteredStates = [];
     this.filteredCities = [];
   }
-  
+
   getEmployee() {
     this.empService.getEmployees().subscribe(
       (res) => {
@@ -106,8 +113,8 @@ export class EmployeeComponent implements OnInit {
           ...emp,
           countryName: this.countries.find(c => c.id === emp.countryId)?.name || '',
           stateName: this.states.find(s => s.id === emp.stateId)?.name || '',
-          cityName: this.cities.find(c => c.stateId === emp.cityId)?.name || '',
-          status: emp.status ? 'Active' : 'Deactive'
+          cityName: this.cities.find(c => c.id === emp.cityId)?.name || '',
+          status: emp.status === 'Active' ? true : false
         }));
       },
       (error) => {
@@ -124,33 +131,33 @@ export class EmployeeComponent implements OnInit {
 
     const formData = this.employeeForm.value;
 
-    if (formData.id === 0) {
-      this.empService.addEmployee(formData).subscribe(() => {
-        alert('Employee Added Successfully');
+    if (this.isEditMode) {
+      this.empService.updateEmployee(formData).subscribe(() => {
+        alert('Employee Updated Successfully');
         this.getEmployee();
         this.closeModel();
       });
     } else {
-      this.empService.updateEmployee(formData).subscribe(() => {
-        alert('Employee Updated Successfully');
+      this.empService.addEmployee(formData).subscribe(() => {
+        alert('Employee Added Successfully');
         this.getEmployee();
         this.closeModel();
       });
     }
 
     this.employeeForm.reset();
-    this.employeeForm.patchValue({ status: false });
+    this.employeeForm.patchValue({ status: 'Active' });
+    this.isEditMode = false;
   }
 
-  onEdit(employee: Employee) {
-    this.employeeForm.reset();
-    this.employeeForm.patchValue(employee);
+ onEdit(employee: Employee) {
+  console.log('Editing employee:', employee); 
+  this.employeeForm.patchValue(employee);
+  this.filteredStates = this.states.filter(s => s.countryId === employee.countryId);
+  this.filteredCities = this.cities.filter(c => c.stateId === employee.stateId);
+  this.openModel(true);
+}
 
-    this.filteredStates = this.states.filter(s => s.countryId === employee.countryId);
-    this.filteredCities = this.cities.filter(c => c.stateId === employee.stateId);
-
-    this.openModel();
-  }
 
   onDelete(id: number) {
     if (confirm("Are you sure you want to delete this Employee?")) {
@@ -159,6 +166,22 @@ export class EmployeeComponent implements OnInit {
         this.getEmployee();
       });
     }
+  }
+
+  toggleStatus() {
+    const currentStatus = this.employeeForm.value.status;
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+    const updatedEmployee = {
+      ...this.employeeForm.value,
+      status: newStatus
+    };
+
+    this.empService.updateEmployee(updatedEmployee).subscribe(() => {
+      alert(`Employee ${newStatus === 'Active' ? 'enabled' : 'disabled'} successfully.`);
+      this.getEmployee();
+      this.closeModel();
+    });
   }
 
   onCountryChange(event: Event): void {
@@ -179,3 +202,4 @@ export class EmployeeComponent implements OnInit {
     return emp.id;
   }
 }
+

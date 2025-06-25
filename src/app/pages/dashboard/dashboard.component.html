@@ -1,29 +1,27 @@
-<h2 class="text-center text-primary">🏥 Dashboard</h2>
-
-<div class="row text-center mt-4">
-  <div class="col-md-4">
-    <div class="card bg-info text-white">
-      <div class="card-body">
-        <h5>Total Doctors</h5>
-        <p>12</p>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Doctors</h5>
+          <p class="card-text">{{ totalDoctors }}</p>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card bg-success text-white">
-      <div class="card-body">
-        <h5>Total Patients</h5>
-        <p>45</p>
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Patients</h5>
+          <p class="card-text">{{ totalPatients }}</p>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card bg-warning text-dark">
-      <div class="card-body">
-        <h5>Appointments Today</h5>
-        <p>9</p>
+    <div class="col-md-4">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Appointments Today</h5>
+          <p class="card-text">{{ appointmentsToday }}</p>
+        </div>
       </div>
     </div>
   </div>

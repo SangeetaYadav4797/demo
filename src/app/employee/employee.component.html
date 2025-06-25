@@ -1,54 +1,30 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
-  <a class="navbar-brand fw-bold" routerLink="/">🏥 HealthCare</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button> 
+<div class="container mt-4">
+  <h2 class="text-center mb-3">👤 Employee Management</h2>
 
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav me-auto">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/home">Home</a>
-      </li>
-      <li class="nav-item" *ngIf="userRole === 'admin'">
-        <a class="nav-link" routerLink="/doctors">Doctors</a>
-      </li>
-      <li class="nav-item" *ngIf="userRole === 'admin'">
-        <a class="nav-link" routerLink="/patients">Patients</a>
-      </li>
-      <li class="nav-item" *ngIf="userRole === 'doctor'">
-        <a class="nav-link" routerLink="/my-patients">My Patients</a>
-      </li>
-      <li class="nav-item" *ngIf="userRole === 'patient'">
-        <a class="nav-link" routerLink="/book-appointment">Book Appointment</a>
-      </li>
-    </ul>
-    <ul class="navbar-nav">
-      <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" routerLink="/login">Login</a>
-      </li>
-      <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" routerLink="/register">Register</a>
-      </li>
-      <li class="nav-item" *ngIf="isLoggedIn">
-        <a class="nav-link text-danger" (click)="logout()">Logout</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-<div class="container-fluid">
-  <div class="row align-items-center p-3 bg-info text-white">
-    <div class="col-6">
-      <h3 class="m-0">Employee List</h3>
-    </div>
-    <div class="col-6 text-end">
-      <button class="btn btn-warning" (click)="openModel()">Add Employee</button>
-    </div>
+  <div style="display: flex; justify-content: flex-end;">
+    <button
+      (click)="openModel()"
+      style="
+        background-color: #1976d2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+      "
+      onmouseover="this.style.backgroundColor='#125ea2'"
+      onmouseout="this.style.backgroundColor='#1976d2'"
+    >
+      ➕ Add Employee
+    </button>
   </div>
 
-  <!-- Table for employee list -->
-  <table class="table table-bordered table-striped" *ngIf="employeeList.length > 0; else noData">
-    <thead>
+  <table class="table table-bordered table-striped mt-4">
+    <thead class="table-dark">
       <tr>
         <th>Name</th>
         <th>Email</th>
@@ -64,8 +40,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let emp of employeeList; trackBy: trackByEmpId">
-        <td >{{ emp.name }}</td>
+      <tr *ngFor="let emp of employeeList">
+        <td>{{ emp.name }}</td>
         <td>{{ emp.email }}</td>
         <td>{{ emp.mobile }}</td>
         <td>{{ emp.age }}</td>
@@ -82,10 +58,6 @@
       </tr>
     </tbody>
   </table>
-
-  <ng-template #noData>
-    <p class="text-center text-muted">No employees found.</p>
-  </ng-template>
 </div>
 
 <!-- Modal -->
@@ -93,55 +65,38 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-info text-white">
-        <h4>{{ employeeForm.value.id ? 'Update Employee' : 'Add Employee' }}</h4>
+        <h4 class="modal-title">{{ isEditMode ? 'Update Employee' : 'Add Employee' }}</h4>
         <button type="button" class="btn-close" (click)="closeModel()"></button>
       </div>
       <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
-          <div class="mb-3">
-            <input type="text" formControlName="name" class="form-control" placeholder="Name" />
-            <div *ngIf="employeeForm.get('name')?.invalid && employeeForm.get('name')?.touched" class="text-danger">
-              Name is required.
+          <div class="mb-3 row">
+            <div class="col-6">
+              <input type="text" class="form-control" placeholder="Name" formControlName="name" />
+            </div>
+            <div class="col-6">
+              <input type="email" class="form-control" placeholder="Email" formControlName="email" />
             </div>
           </div>
 
           <div class="mb-3 row">
             <div class="col-6">
-              <input type="email" formControlName="email" class="form-control" placeholder="Email" />
-              <div *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" class="text-danger">
-                Enter a valid email.
-              </div>
+              <input type="text" class="form-control" placeholder="Mobile" formControlName="mobile" />
             </div>
             <div class="col-6">
-              <input type="text" formControlName="mobile" class="form-control" placeholder="Mobile" />
-              <div *ngIf="employeeForm.get('mobile')?.invalid && employeeForm.get('mobile')?.touched" class="text-danger">
-                Mobile is required.
-              </div>
+              <input type="number" class="form-control" placeholder="Age" formControlName="age" />
             </div>
           </div>
 
           <div class="mb-3 row">
             <div class="col-6">
-              <input type="number" formControlName="age" class="form-control" placeholder="Age" />
-              <div *ngIf="employeeForm.get('age')?.invalid && employeeForm.get('age')?.touched" class="text-danger">
-                Age is required.
-              </div>
+              <select class="form-control" formControlName="gender">
+                <option value="">Select Gender</option>
+                <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
+              </select>
             </div>
             <div class="col-6">
-              <input type="number" formControlName="salary" class="form-control" placeholder="Salary" />
-              <div *ngIf="employeeForm.get('salary')?.invalid && employeeForm.get('salary')?.touched" class="text-danger">
-                Salary is required.
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <select class="form-control" formControlName="gender">
-              <option value="">Select Gender</option>
-              <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
-            </select>
-            <div *ngIf="employeeForm.get('gender')?.invalid && employeeForm.get('gender')?.touched" class="text-danger">
-              Gender is required.
+              <input type="number" class="form-control" placeholder="Salary" formControlName="salary" />
             </div>
           </div>
 
@@ -150,9 +105,6 @@
               <option value="">Select Country</option>
               <option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</option>
             </select>
-            <div *ngIf="employeeForm.get('countryId')?.invalid && employeeForm.get('countryId')?.touched" class="text-danger">
-              Country is required.
-            </div>
           </div>
 
           <div class="mb-3">
@@ -160,9 +112,6 @@
               <option value="">Select State</option>
               <option *ngFor="let s of filteredStates" [value]="s.id">{{ s.name }}</option>
             </select>
-            <div *ngIf="employeeForm.get('stateId')?.invalid && employeeForm.get('stateId')?.touched" class="text-danger">
-              State is required.
-            </div>
           </div>
 
           <div class="mb-3">
@@ -170,9 +119,6 @@
               <option value="">Select City</option>
               <option *ngFor="let ct of filteredCities" [value]="ct.id">{{ ct.name }}</option>
             </select>
-            <div *ngIf="employeeForm.get('cityId')?.invalid && employeeForm.get('cityId')?.touched" class="text-danger">
-              City is required.
-            </div>
           </div>
 
           <div class="form-check">
@@ -183,7 +129,7 @@
 
         <div class="modal-footer">
           <button type="submit" [disabled]="employeeForm.invalid" class="btn btn-primary">
-            {{ employeeForm.value.id ? 'Update' : 'Save' }}
+            {{ isEditMode ? 'Update' : 'Save' }}
           </button>
           <button type="button" class="btn btn-danger" (click)="closeModel()">Close</button>
         </div>
